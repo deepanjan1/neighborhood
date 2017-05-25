@@ -1,0 +1,14 @@
+{
+  "name": "neighborhood_map",
+  "version": "1.0.0",
+  "description": "Map application that displays places best places to work in the city",
+  "main": "viewmodel.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Deepanjan De",
+  "license": "ISC",
+  "dependencies": {
+    "import-js": "^2.2.1"
+  }
+}
