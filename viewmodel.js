@@ -39,7 +39,7 @@ var studySpots = [{
 var map;
 
 // initializing the marker that will locate the center of a neighborhood
-var marker;
+var markers = [];
 
 
 function initMap() {
@@ -57,19 +57,6 @@ function initMap() {
 	document.getElementById('search-neighborhood').addEventListener('click', function() {
 		searchNeighbhorhood();
     });
-	// checking if location is turned on browser
-	// if (navigator.geolocation) {
-	// 	navigator.geolocation.getCurrentPosition(function(pos) {
-	// 		var coords = {
-	// 			lat: pos.coords.latitude,
-	// 			lng: pos.coords.longitude
-	// 		};
-	// 		console.log(coords);
-	// 		// setting the center of the map to the current locaiton
-	// 		map.setCenter(coords);
-	// 		marker = setMarker(coords);
-	// 		});
-	// }
 
 }
 
@@ -101,12 +88,12 @@ function searchNeighbhorhood() {
 				if (status == google.maps.GeocoderStatus.OK) {
 					map.setCenter(results[0].geometry.location);
 					map.setZoom(15);
-					marker = setMarker(results[0].geometry.location)
+					marker = setMarker(results[0].geometry.location);
 					findPlacesWithinTime(results);
 				} else {
 					window.alert('We could not find that location - try entering a more specific place');
 				}
-			});
+		});
 	}
 }
 
@@ -115,7 +102,7 @@ function findPlacesWithinTime(results){
 	var origin = [results[0].formatted_address];
 	var locations = [];
 	var mode = document.getElementById('mode').value;
-	console.log(origin);
+	var maxDuration = document.getElementById('max-duration').value;
 	for (var i = 0; i < studySpots.length; i++) {
 		locations[i] = studySpots[i].location; 
 	}
@@ -134,19 +121,45 @@ function findPlacesWithinTime(results){
 				var results = response.rows[i].elements;
 				for (var j = 0; j < results.length; j++) {
 					var element = results[j];
-					console.log(element);
-					// var distance = element.distance.text;
-					// var duration = element.duration.text;
-					// var from = origin[i];
-					// var to = destinations[j];
+					if (element.status == "OK") {
+						var distanceText = element.distance.text;
+						var duration = element.duration.value/60;
+						var durationText = element.duration.text;
+						if (duration <= maxDuration) {
+							var geocode = new google.maps.Geocoder();
+							geocode.geocode(
+							{ address: destinations[j],
+							  componentRestrictions: {locality: 'New York'}
+							}, function (results, status) {
+								if (status == google.maps.GeocoderStatus.OK) {
+									markers[j] = setMarker(results[0].geometry.location);
+									
+									// create an info window
+									var infowindow = new google.maps.InfoWindow({
+										content: durationText + ' away, ' + distanceText
+									});
+									infowindow.open(map, markers[j]);
+									
+									// close window on click
+									markers[j].infowindow = infowindow;
+									google.maps.event.addListener(markers[j], 'click', function() {
+										this.infowindow.close();
+									});
+								}
+								else {
+									window.alert('We could not find any locations');
+								}								
+							});	
+						}
+					}
 				}
-			}
+			} 
 		}
-	});
+	});  
 }
 
 function displayMarkers(results){
 	var timeDuration = document.getElementById('max-duration').value;
 	var origin = response.originAddresses;
-	console.log(results)
+	console.log(results);
 }
