@@ -30,11 +30,22 @@
 					<input id="search-neighborhood" type="button" value="Enter">
 				</div>
 			</div>
+			<div>
+				<br><br>
+				<h1>Places to Work:</h1>
+				<hr>
+				<ul class="search-results" data-bind="foreach: studySpots">
+					<li><span data-bind="text: name"> </span></li>
+<!-- 					<span data-bind="text: address"> </span>
+					<span data-bind="text: duration"> </span> -->
+				</ul>
+			</div>
 		</div>
 		<div id="map"></div>
 	</div>
-<!-- 	<script type='text/javascript' src="knockout-3.4.2.js"></script> -->
+	<script type='text/javascript' src="knockout-3.4.2.js"></script>
 	<script type="text/javascript" src="viewmodel.js"></script>
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 	<script async defer
         src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyCHBVQfAQVs1lWPrgQ5p9hI1bRGxsQShcI&v=3&callback=initMap">
     </script>
