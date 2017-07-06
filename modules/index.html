@@ -8,11 +8,38 @@
 	<div class="container">
 		<div class="options-box">
 			<div>
+				<h1>Where's the closest coffee shops to work in?</h1>
+			</div>
+			<hr>
+			<div>
+				<span class="text"> Within </span>
+          		<select id="max-duration">
+	            	<option value="10">10 min</option>
+	            	<option value="15">15 min</option>
+	            	<option value="30">30 min</option>
+          		</select>
+          		<select id="mode">
+		            <option value="DRIVING">drive</option>
+		            <option value="WALKING">walk</option>
+		            <option value="BICYCLING">bike</option>
+		            <option value="TRANSIT">transit ride</option>
+          		</select>
+				<span class="text">of</span>
+				<div class = "search-box">
+					<input id="search-neighborhood-text" type="text" placeholder="Enter your favorite area!">
+					<input id="search-neighborhood" type="button" value="Enter">
+				</div>
+			</div>
+			<div>
 				<br><br>
-				<h1>Places To Work</h1>
+				<h1>Closest Coffee Shops</h1>
 				<hr>
 				<ul class="search-results" data-bind="foreach: selectedSpots">
 					<li><span data-bind="text: name"> </span></li>
+					<ul>
+						<li><span data-bind="text: phone"></span></li>
+						<li><span data-bind="text: url"></span></li>
+					</ul>
 				</ul>
 			</div>
 		</div>
