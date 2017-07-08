@@ -37,8 +37,9 @@
 				<ul class="search-results" data-bind="foreach: selectedSpots">
 					<li><span data-bind="text: name"> </span></li>
 					<ul>
+						<li><span data-bind="text: address"></span></li>
 						<li><span data-bind="text: phone"></span></li>
-						<li><span data-bind="text: url"></span></li>
+						<li><span data-bind="html: htmlUrl"></span></li>
 					</ul>
 				</ul>
 			</div>

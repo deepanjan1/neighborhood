@@ -85,7 +85,8 @@ function getFourSquareData(coords, query) {
 				coffeePlace = {
 					name: result.response.venues[i].name,
 					phone: result.response.venues[i].contact.formattedPhone,
-					url: result.response.venues[i].url,
+					displayUrl: result.response.venues[i].url,
+					htmlUrl: '<a href="' + result.response.venues[i].url + '">' + result.response.venues[i].url + '</a>',
 					address: [result.response.venues[i].location.formattedAddress[0],
 					result.response.venues[i].location.formattedAddress[1],
 					result.response.venues[i].location.formattedAddress[2]],
@@ -100,13 +101,16 @@ function getFourSquareData(coords, query) {
 				// for loop to create markers on initial load
 				for (var i = 0; i < foursquareData.length; i++) {
 					var marker = new setMarker(foursquareData[i].latlng);
-					markers.push(marker);
+					
+					// add marker bounce animation
+					var markerBounce = addBounce(marker);
+					
+					markers.push(markerBounce);						
 				}
 				ViewModel.selectedSpots(foursquareData);
 				sessionStarted = false;
 			} else {
 				removeAllMarkers();
-				console.log(markers);
 				findDistance();
 			}
 
@@ -147,14 +151,10 @@ function findDistance() {
 						// Create marker
 						var marker = new setMarker(filteredList[j].latlng);
 						
-						// create an event listener to animate marker
-						marker.addListener('click', function() {
-							marker.setAnimation(google.maps.Animation.BOUNCE);
-							setTimeout(function() {
-								marker.setAnimation(null); 
-							}, 750);
-							markers.push(marker);
-						});
+						// add bounce animation
+						var markerBounce = addBounce(marker);
+
+						markers.push(markerBounce);
 
 						// Update view model
 						ViewModel.selectedSpots(foursquareData);
@@ -179,9 +179,21 @@ function setMarker(latlng) {
 	return marker;
 }
 
+// add marker bounce
+function addBounce(marker) {
+	marker.addListener('click', function() {
+		marker.setAnimation(google.maps.Animation.BOUNCE);
+		setTimeout(function() {
+			marker.setAnimation(null); 
+		}, 750);
+	});
+	return marker;
+}
+
+// remove markers from the map
 function removeAllMarkers() {
 	for (var i = 0; i < markers.length; i++) {
-		markers[i].setMap(null);
+		markers[i].setVisible(false);
 	}
 	markers = [];
 }
