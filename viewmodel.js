@@ -4,11 +4,10 @@ var map
 // global variable for coffee shop data
 var foursquareData = [];
 
-// global variable for markers
-var markers = [];
 
 // global variable for start of session
 var sessionStarted = true;
+
 
 // fixed center on initial load
 var coords = {
@@ -20,6 +19,7 @@ var coords = {
 function viewModel() {
 	var self = this;
 	self.selectedSpots = ko.observableArray(foursquareData);
+	// self.showInfo = function
 }
 
 // load Google map
@@ -43,6 +43,7 @@ function initMap () {
 		}
 	});
 }
+
 
 
 // function to geocode the address and store lat/lng within 
@@ -91,25 +92,28 @@ function getFourSquareData(coords, query) {
 					result.response.venues[i].location.formattedAddress[1],
 					result.response.venues[i].location.formattedAddress[2]],
 					latlng: new google.maps.LatLng(result.response.venues[i].location.lat, 
-						result.response.venues[i].location.lng)
+						result.response.venues[i].location.lng),
+					marker: new setMarker(new google.maps.LatLng(result.response.venues[i].location.lat, 
+						result.response.venues[i].location.lng))
 				};
+				coffeePlace.marker = addBounce(coffeePlace);
+				createInfoWindow(coffeePlace);
 				foursquareData.push(coffeePlace);
 			}
 			console.log(foursquareData);
 			// check if this is the first session
 			if (sessionStarted == true) {
 				// for loop to create markers on initial load
-				for (var i = 0; i < foursquareData.length; i++) {
-					var marker = new setMarker(foursquareData[i].latlng);
+				// for (var i = 0; i < foursquareData.length; i++) {
+				// 	// foursquareData[i].marker = new setMarker(foursquareData[i].latlng);
 					
-					// add marker bounce animation
-					var markerBounce = addBounce(marker);
+				// 	// add marker bounce animation
 					
-					markers.push(markerBounce);						
-				}
+				// }
 				ViewModel.selectedSpots(foursquareData);
 				sessionStarted = false;
 			} else {
+				console.log(foursquareData);
 				removeAllMarkers();
 				findDistance();
 			}
@@ -146,15 +150,19 @@ function findDistance() {
 					duration = element.duration.value/60;
 					if (duration < maxDuration) {
 						// Build back foursquareData array with filtered results
+						filteredList[j].marker = new setMarker(filteredList[j].latlng);
+
+						// add bounce animation
+						var markerBounce = addBounce(filteredList[j].marker);
+
+						createInfoWindow(markerBounce, filteredList[j]);
+						
 						foursquareData.push(filteredList[j]);
 
 						// Create marker
-						var marker = new setMarker(filteredList[j].latlng);
-						
-						// add bounce animation
-						var markerBounce = addBounce(marker);
+						// var marker = new setMarker(filteredList[j].latlng);
 
-						markers.push(markerBounce);
+						// markers.push(markerBounce);
 
 						// Update view model
 						ViewModel.selectedSpots(foursquareData);
@@ -180,11 +188,11 @@ function setMarker(latlng) {
 }
 
 // add marker bounce
-function addBounce(marker) {
-	marker.addListener('click', function() {
-		marker.setAnimation(google.maps.Animation.BOUNCE);
+function addBounce(placeInfo) {
+	placeInfo.marker.addListener('click', function() {
+		placeInfo.marker.setAnimation(google.maps.Animation.BOUNCE);
 		setTimeout(function() {
-			marker.setAnimation(null); 
+			placeInfo.marker.setAnimation(null); 
 		}, 750);
 	});
 	return marker;
@@ -192,10 +200,26 @@ function addBounce(marker) {
 
 // remove markers from the map
 function removeAllMarkers() {
-	for (var i = 0; i < markers.length; i++) {
-		markers[i].setVisible(false);
+	// console.log(foursquareData);
+	for (var i = 0; i < foursquareData.length; i++) {
+		foursquareData[i].marker.setVisible(false);
+		foursquareData[i].marker = [];
 	}
-	markers = [];
+}
+
+// open infowindow on click
+function createInfoWindow (placeInfo) {
+	var contentString = '<div id="content">' + '<p><b>Name: </b>' + placeInfo.name + 
+	'</p>' + '<p><b>Phone: </b>' + placeInfo.phone + '</p>' + '<p><b>Address: </b>' + 
+	placeInfo.address[0] + '</p></div>';
+
+	var infoWindow = new google.maps.InfoWindow({
+		content: contentString
+	});
+
+	google.maps.event.addListener(placeInfo.marker, 'click', function() {
+		infoWindow.open(map, placeInfo.marker);
+	});
 }
 
 // creating knockout viewmodel

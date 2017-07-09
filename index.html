@@ -35,7 +35,7 @@
 				<h1>Closest Coffee Shops</h1>
 				<hr>
 				<ul class="search-results" data-bind="foreach: selectedSpots">
-					<li><span data-bind="text: name"> </span></li>
+					<li id="button-click"><span data-bind="text: name, click: $parent.showInfo"> </span></li>
 					<ul>
 						<li><span data-bind="text: address"></span></li>
 						<li><span data-bind="text: phone"></span></li>
