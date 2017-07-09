@@ -113,8 +113,6 @@ function getFourSquareData(coords, query) {
 				ViewModel.selectedSpots(foursquareData);
 				sessionStarted = false;
 			} else {
-				console.log(foursquareData);
-				removeAllMarkers();
 				findDistance();
 			}
 
@@ -131,7 +129,7 @@ function findDistance() {
 	
 	// create a temporary store for foursquareData
 	var filteredList = foursquareData;
-
+	removeAllMarkers();
 	foursquareData = [];
 	ViewModel.selectedSpots(foursquareData);
 
@@ -153,9 +151,9 @@ function findDistance() {
 						filteredList[j].marker = new setMarker(filteredList[j].latlng);
 
 						// add bounce animation
-						var markerBounce = addBounce(filteredList[j].marker);
+						filteredList[j].marker = addBounce(filteredList[j]);
 
-						createInfoWindow(markerBounce, filteredList[j]);
+						createInfoWindow(filteredList[j]);
 						
 						foursquareData.push(filteredList[j]);
 
@@ -200,11 +198,11 @@ function addBounce(placeInfo) {
 
 // remove markers from the map
 function removeAllMarkers() {
-	// console.log(foursquareData);
 	for (var i = 0; i < foursquareData.length; i++) {
 		foursquareData[i].marker.setVisible(false);
 		foursquareData[i].marker = [];
 	}
+	console.log(foursquareData);
 }
 
 // open infowindow on click
