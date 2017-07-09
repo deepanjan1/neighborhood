@@ -83,6 +83,9 @@ function getFourSquareData(coords, query) {
 		'&query=' + query, {}, function(result) {
 			foursquareData = [];
 			for (var i = 0; i < result.response.venues.length; i++) {
+				latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
+				result.response.venues[i].location.lng);
+				console.log(latlng);
 				coffeePlace = {
 					name: result.response.venues[i].name,
 					phone: result.response.venues[i].contact.formattedPhone,
@@ -91,28 +94,19 @@ function getFourSquareData(coords, query) {
 					address: [result.response.venues[i].location.formattedAddress[0],
 					result.response.venues[i].location.formattedAddress[1],
 					result.response.venues[i].location.formattedAddress[2]],
-					latlng: new google.maps.LatLng(result.response.venues[i].location.lat, 
-						result.response.venues[i].location.lng),
-					marker: new setMarker(new google.maps.LatLng(result.response.venues[i].location.lat, 
-						result.response.venues[i].location.lng))
+					latlng: latlng,
+					marker: new setMarker(latlng)
 				};
 				coffeePlace.marker = addBounce(coffeePlace);
 				createInfoWindow(coffeePlace);
 				foursquareData.push(coffeePlace);
 			}
-			console.log(foursquareData);
 			// check if this is the first session
 			if (sessionStarted == true) {
-				// for loop to create markers on initial load
-				// for (var i = 0; i < foursquareData.length; i++) {
-				// 	// foursquareData[i].marker = new setMarker(foursquareData[i].latlng);
-					
-				// 	// add marker bounce animation
-					
-				// }
 				ViewModel.selectedSpots(foursquareData);
 				sessionStarted = false;
 			} else {
+				console.log(foursquareData);
 				findDistance();
 			}
 
@@ -131,7 +125,6 @@ function findDistance() {
 	var filteredList = foursquareData;
 	removeAllMarkers();
 	foursquareData = [];
-	ViewModel.selectedSpots(foursquareData);
 
 	for (var i = 0; i < filteredList.length; i++) {
 		(function outer(j) {
@@ -147,20 +140,11 @@ function findDistance() {
 				if (status == 'OK' && element.status == 'OK') {
 					duration = element.duration.value/60;
 					if (duration < maxDuration) {
-						// Build back foursquareData array with filtered results
-						filteredList[j].marker = new setMarker(filteredList[j].latlng);
-
-						// add bounce animation
-						filteredList[j].marker = addBounce(filteredList[j]);
+						addMarkers(filteredList[j]);
 
 						createInfoWindow(filteredList[j]);
 						
 						foursquareData.push(filteredList[j]);
-
-						// Create marker
-						// var marker = new setMarker(filteredList[j].latlng);
-
-						// markers.push(markerBounce);
 
 						// Update view model
 						ViewModel.selectedSpots(foursquareData);
@@ -200,9 +184,12 @@ function addBounce(placeInfo) {
 function removeAllMarkers() {
 	for (var i = 0; i < foursquareData.length; i++) {
 		foursquareData[i].marker.setVisible(false);
-		foursquareData[i].marker = [];
 	}
-	console.log(foursquareData);
+}
+
+// remove markers from the map
+function addMarkers(placeInfo) {
+		placeInfo.marker.setVisible(true);
 }
 
 // open infowindow on click
