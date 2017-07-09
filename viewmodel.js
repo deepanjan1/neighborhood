@@ -20,7 +20,7 @@ function viewModel() {
 	var self = this;
 	self.selectedSpots = ko.observableArray(foursquareData);
 	// self.showInfo = function (foursquareData) {
-		
+
 	// }
 }
 
@@ -83,7 +83,7 @@ function getFourSquareData(coords, query) {
 	$.getJSON(base_url + '?ll=' + coords.lat + ',' + coords.lng 
 		+ '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + version + 
 		'&query=' + query, {}, function(result) {
-			foursquareData = [];
+			removeAllMarkers();
 			for (var i = 0; i < result.response.venues.length; i++) {
 				latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
 				result.response.venues[i].location.lng);
@@ -107,7 +107,6 @@ function getFourSquareData(coords, query) {
 				ViewModel.selectedSpots(foursquareData);
 				sessionStarted = false;
 			} else {
-				console.log(foursquareData);
 				findDistance();
 			}
 
@@ -124,7 +123,6 @@ function findDistance() {
 	
 	// create a temporary store for foursquareData
 	var filteredList = foursquareData;
-	removeAllMarkers();
 	foursquareData = [];
 
 	for (var i = 0; i < filteredList.length; i++) {
@@ -185,6 +183,7 @@ function addBounce(placeInfo) {
 function removeAllMarkers() {
 	for (var i = 0; i < foursquareData.length; i++) {
 		foursquareData[i].marker.setVisible(false);
+		foursquareData[i] = [];
 	}
 }
 
