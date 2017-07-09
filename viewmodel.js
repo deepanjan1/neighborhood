@@ -19,7 +19,9 @@ var coords = {
 function viewModel() {
 	var self = this;
 	self.selectedSpots = ko.observableArray(foursquareData);
-	// self.showInfo = function
+	// self.showInfo = function (foursquareData) {
+		
+	// }
 }
 
 // load Google map
@@ -85,7 +87,6 @@ function getFourSquareData(coords, query) {
 			for (var i = 0; i < result.response.venues.length; i++) {
 				latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
 				result.response.venues[i].location.lng);
-				console.log(latlng);
 				coffeePlace = {
 					name: result.response.venues[i].name,
 					phone: result.response.venues[i].contact.formattedPhone,
