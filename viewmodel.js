@@ -19,9 +19,13 @@ var coords = {
 function viewModel() {
 	var self = this;
 	self.selectedSpots = ko.observableArray(foursquareData);
-	// self.showInfo = function (foursquareData) {
-
-	// }
+	self.showInfo = function (foursquareData) {
+		foursquareData.marker.infoWindow.open(map, foursquareData.marker);
+		foursquareData.marker.setAnimation(google.maps.Animation.BOUNCE);
+		setTimeout(function() {
+			foursquareData.marker.setAnimation(null); 
+		}, 750);
+	}
 }
 
 // load Google map
@@ -80,10 +84,10 @@ var base_url = 'https://api.foursquare.com/v2/venues/search';
 
 // pull foursquare data
 function getFourSquareData(coords, query) {
+	removeAllMarkers();
 	$.getJSON(base_url + '?ll=' + coords.lat + ',' + coords.lng 
 		+ '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + version + 
 		'&query=' + query, {}, function(result) {
-			removeAllMarkers();
 			for (var i = 0; i < result.response.venues.length; i++) {
 				latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
 				result.response.venues[i].location.lng);
@@ -119,11 +123,10 @@ function findDistance() {
 	var distanceMatrixService = new google.maps.DistanceMatrixService;
 	var origin = [new google.maps.LatLng(parseFloat(coords.lat), parseFloat(coords.lng))];
 	var mode = document.getElementById('mode').value;
-	var maxDuration = document.getElementById('max-duration').value;
-	
+	var maxDuration = document.getElementById('max-duration').value;	
 	// create a temporary store for foursquareData
 	var filteredList = foursquareData;
-	foursquareData = [];
+	removeAllMarkers();
 
 	for (var i = 0; i < filteredList.length; i++) {
 		(function outer(j) {
@@ -182,14 +185,15 @@ function addBounce(placeInfo) {
 // remove markers from the map
 function removeAllMarkers() {
 	for (var i = 0; i < foursquareData.length; i++) {
-		foursquareData[i].marker.setVisible(false);
-		foursquareData[i] = [];
+		foursquareData[i].marker.infoWindow.setMap(null);
+		foursquareData[i].marker.setMap(null);
 	}
+	foursquareData = [];
 }
 
 // remove markers from the map
 function addMarkers(placeInfo) {
-		placeInfo.marker.setVisible(true);
+		placeInfo.marker.setMap(map);
 }
 
 // open infowindow on click
@@ -202,8 +206,12 @@ function createInfoWindow (placeInfo) {
 		content: contentString
 	});
 
+	// add infowindow to the marker object within a place object
+	placeInfo.marker.infoWindow = infoWindow;
+
+	// add listener to open infowindow on a marker click
 	google.maps.event.addListener(placeInfo.marker, 'click', function() {
-		infoWindow.open(map, placeInfo.marker);
+		placeInfo.marker.infoWindow.open(map, placeInfo.marker);
 	});
 }
 
@@ -212,31 +220,3 @@ var ViewModel = new viewModel();
 
 // apply bindings
 ko.applyBindings(ViewModel);
-
-
-// var myName = [
-// 	{name: "Deep"},
-// 	{name: "Harini"},
-// 	{name: "Minty"}
-// ]
-
-// var newName = [];
-
-// function myViewModel() {
-// 	var self = this;
-// 	self.names = ko.observableArray(myName);	
-// 	// self.names.push(newName);
-// }
-
-// function changeViewModel(nName) {
-// 	addName = {
-// 		name: nName
-// 	};
-
-// 	MyViewModel.names.push(addName);
-
-// }
-
-// var MyViewModel = new myViewModel();
-
-// ko.applyBindings(MyViewModel);
