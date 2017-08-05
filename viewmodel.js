@@ -1,5 +1,5 @@
 // global variable for map
-var map
+var map;
 
 // global variable for coffee shop data
 var foursquareData = [];
