@@ -154,7 +154,7 @@ function findDistance() {
 			if (filteredList.length === 0) {
 				window.alert('Could not find a coffee shop in your area. Please increase the search radius.');
 			} 			
-		})
+		});
 	});
 }
 
