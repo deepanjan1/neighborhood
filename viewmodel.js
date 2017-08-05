@@ -128,36 +128,34 @@ function findDistance() {
 	var filteredList = foursquareData;
 	removeAllMarkers();
 
-	for (var i = 0; i < filteredList.length; i++) {
-		(function outer(j) {
-			latlng = [filteredList[i].latlng];
-			distanceMatrixService.getDistanceMatrix(
-			{
-				origins: origin,
-				destinations: latlng,
-				travelMode: google.maps.TravelMode[mode],
-				unitSystem: google.maps.UnitSystem.IMPERIAL 
-			}, function (response, status) {
-				element = response.rows[0].elements[0];
-				if (status == 'OK' && element.status == 'OK') {
-					duration = element.duration.value/60;
-					if (duration < maxDuration) {
-						addMarkers(filteredList[j]);
+	filteredList.forEach(function(listItem, i) {
+		latlng = [listItem.latlng];
+		distanceMatrixService.getDistanceMatrix(
+		{
+			origins: origin,
+			destinations: latlng,
+			travelMode: google.maps.TravelMode[mode],
+			unitSystem: google.maps.UnitSystem.IMPERIAL 
+		}, function (response, status) {
+			element = response.rows[0].elements[0];
+			if (status == 'OK' && element.status == 'OK') {
+				duration = element.duration.value/60;
+				if (duration < maxDuration) {
+					addMarkers(listItem);
 
-						createInfoWindow(filteredList[j]);
-						
-						foursquareData.push(filteredList[j]);
+					createInfoWindow(listItem);
+					
+					foursquareData.push(listItem);
 
-						// Update view model
-						ViewModel.selectedSpots(foursquareData);
-					} 
-				}
-				if (filteredList.length === 0) {
-					window.alert('Could not find a coffee shop in your area. Please increase the search radius.');
+					// Update view model
+					ViewModel.selectedSpots(foursquareData);
 				} 
-			});
-		})(i);
-	}
+			}
+			if (filteredList.length === 0) {
+				window.alert('Could not find a coffee shop in your area. Please increase the search radius.');
+			} 			
+		})
+	});
 }
 
 // create a marker
