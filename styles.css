@@ -1,9 +1,6 @@
 html,
 body {
 	font-family: Arial, sans-serif;
-/*    height: 100%;
-    margin: 0;
-    padding: 0;*/
 }
 
 .border {
@@ -15,33 +12,37 @@ body {
     height: 100%;
     max-width: 850px;
     margin: 2em 5em auto 5em;
-/*    position: relative;*/
 }
 
-.options-box {
-/*	width: 33.3%;*/
+.search-results {
+	max-height: 350px;
+	overflow-y: scroll;
 }
 
-
+.bold-rule {
+	height: 4px;
+	background: #2d499d;
+}
 
 #map {
 	bottom:0px;
 	height: auto;
-/*	left: 350px;*/
-	position: absolute;
-	overflow: hidden;
 }
 
 h1 {
-	color: #525454;
-	font-size: 15px;
-	margin: 0 0 10px 0;
+	color: #2d499d;
+	font-size: 20px;
 	text-align: left;
 }
 
 hr {
 	background: #D0D7D9;
 	height: 1px;
-	margin: 20px 0 20px 0;
+	margin: 10px 0 10px 0;
 	border: none;
+}
+
+ul {
+	list-style: none;
+	padding: 0px;
 }

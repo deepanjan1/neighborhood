@@ -6,16 +6,18 @@
 	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-	<div class="container border">
-		<div class="row">
+	<div class="container">
+		<div class="row border">
 			<div id="options-box" class="col-4 border">
-				<div>
-					<h1>Where's the closest coffee shops to work in?</h1>
+				<div class="row border">
+					<h1 class="col-12">Where's the closest coffee shops to work in?</h1>
 				</div>
-				<hr>
-				<div>
-					<span class="text border"> Within </span>
-	          		<select id="max-duration">
+				<div class="row border">
+					<hr class="bold-rule col-12">	
+				</div>
+				<div class="row border">
+					<span class="text"> Within a </span>
+					<select id="max-duration">
 		            	<option value="10">10 min</option>
 		            	<option value="15">15 min</option>
 		            	<option value="30">30 min</option>
@@ -26,27 +28,36 @@
 			            <option value="BICYCLING">bike</option>
 			            <option value="TRANSIT">transit ride</option>
 	          		</select>
-					<span class="text border">of</span>
+	          		<span class="text">of</span>
 					<div class = "search-box">
 						<input id="search-neighborhood-text" type="text" placeholder="Enter your favorite area!">
-						<input id="search-neighborhood" type="button" value="Enter">
+						<input id="search-neighborhood" type="button" class="primary" value="Enter">
 					</div>
 				</div>
-				<div class="border">
-					<br><br>
-					<h1>Closest Coffee Shops</h1>
-					<hr>
-					<ul class="search-results" data-bind="foreach: selectedSpots">
-						<li id="button-click"><span data-bind="text: name, click: $parent.showInfo"> </span></li>
-						<ul>
-							<li><span data-bind="text: address"></span></li>
-							<li><span data-bind="text: phone"></span></li>
-							<li><span data-bind="html: htmlUrl"></span></li>
-						</ul>
-					</ul>
+				<br>
+				<div class="row">
+					<h1 class="col-12">Closest Coffee Shops</h1>
 				</div>
+				<div class="row">
+					<hr class="bold-rule col-12">	
+				</div>
+				<ul class="search-results" data-bind="foreach: selectedSpots">
+						<div class="row">
+							<div class="col-12">
+								<li id="button-click"><span data-bind="text: name, click: $parent.showInfo"> </span></li>
+								<ul>
+									<li><span data-bind="text: address"></span></li>
+									<li><span data-bind="text: phone"></span></li>
+									<li><span data-bind="html: htmlUrl"></span></li>
+								</ul>
+							</div>
+						</div>
+						<div class="row">
+							<hr class="col-12">	
+						</div>
+				</ul>
 			</div>
-			<div class="col-12 border" id="map"></div>
+			<div class="col-8 border" id="map"></div>
 		</div>
 	</div>
 	<script type='text/javascript' src='https://code.jquery.com/jquery-1.10.2.js'></script>
