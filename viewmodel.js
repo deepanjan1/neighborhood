@@ -25,7 +25,7 @@ function viewModel() {
 		setTimeout(function() {
 			foursquareData.marker.setAnimation(null); 
 		}, 750);
-	}
+	};
 }
 
 // load Google map
@@ -39,8 +39,8 @@ function initMap () {
 	document.getElementById('search-neighborhood').addEventListener('click', function() {
 		var address = document.getElementById('search-neighborhood-text').value;
 		
-		if (address == '') {
-			window.alert('You must enter an area or an address.')
+		if (address === '') {
+			window.alert('You must enter an area or an address.');
 		} else {
 			// send address to geocode function to convert to lat lng
 			geocodeAddress(address, function(){
@@ -70,7 +70,7 @@ function geocodeAddress (address, callback) {
 				map.setCenter(coords);
 				callback();
 			} else {
-				window.alert('Could not find the area. Please try again.')
+				window.alert('Could not find the area. Please try again.');
 			}
 		});
 }
@@ -85,8 +85,8 @@ var base_url = 'https://api.foursquare.com/v2/venues/search';
 // pull foursquare data
 function getFourSquareData(coords, query) {
 	removeAllMarkers();
-	$.getJSON(base_url + '?ll=' + coords.lat + ',' + coords.lng 
-		+ '&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + version + 
+	$.getJSON(base_url + '?ll=' + coords.lat + ',' + coords.lng + 
+		'&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + version + 
 		'&query=' + query, {}, function(result) {
 			for (var i = 0; i < result.response.venues.length; i++) {
 				latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
@@ -107,7 +107,7 @@ function getFourSquareData(coords, query) {
 				foursquareData.push(coffeePlace);
 			}
 			// check if this is the first session
-			if (sessionStarted == true) {
+			if (sessionStarted === true) {
 				ViewModel.selectedSpots(foursquareData);
 				sessionStarted = false;
 			} else {
@@ -120,7 +120,7 @@ function getFourSquareData(coords, query) {
 // apply filter on fourquare data pull
 
 function findDistance() {
-	var distanceMatrixService = new google.maps.DistanceMatrixService;
+	var distanceMatrixService = new google.maps.DistanceMatrixService();
 	var origin = [new google.maps.LatLng(parseFloat(coords.lat), parseFloat(coords.lng))];
 	var mode = document.getElementById('mode').value;
 	var maxDuration = document.getElementById('max-duration').value;	
@@ -152,13 +152,12 @@ function findDistance() {
 						ViewModel.selectedSpots(foursquareData);
 					} 
 				}
-				if (filteredList.length == 0) {
-					window.alert('Could not find a coffee shop in your area. Please increase the search radius.')
+				if (filteredList.length === 0) {
+					window.alert('Could not find a coffee shop in your area. Please increase the search radius.');
 				} 
 			});
-		})(i)
+		})(i);
 	}
-	console.log(foursquareData);
 }
 
 // create a marker
