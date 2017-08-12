@@ -15,10 +15,41 @@ var coords = {
 		lng: -73.9887167
 	};	
 
+// constructor for travel mode object
+var mode = function (text, value) {
+	this.displayText = text;
+	this.actualValue = value
+}
+
+// constructor for time object
+var time = function (text, value) {
+	this.displayText = text;
+	this.actualValue = value
+}
+
 // view model
-function viewModel() {
+function ViewModel() {
 	var self = this;
+	// place observable array
 	self.selectedSpots = ko.observableArray(foursquareData);
+	
+	// time observable array
+	self.timeDuration = ko.observableArray([
+		new time('10 min', 10),
+		new time('15 min', 15),
+		new time('30 min', 30)
+		]);
+	self.selectedTime = ko.observable();
+	
+	// mode observable array
+	self.displayMode = ko.observableArray([
+		new mode('Drive', 'DRIVING'),
+		new mode('Walk', 'WALKING'),
+		new mode('Bike', 'BICYCLING'),
+		new mode('Transit', 'TRANSIT')
+		]);
+	self.selectedMode = ko.observable();
+	
 	self.showInfo = function (foursquareData) {
 		foursquareData.marker.infoWindow.open(map, foursquareData.marker);
 		foursquareData.marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -26,6 +57,22 @@ function viewModel() {
 			foursquareData.marker.setAnimation(null); 
 		}, 750);
 	};
+
+	// neighborhood search
+	self.searchText = ko.observable();
+	self.searchNeighborhood = function() {
+		var address = self.searchText();
+
+		if (address === '') {
+			window.alert('You must enter an area or an address.');
+		} else {
+			// send address to geocode function to convert to lat lng
+			geocodeAddress(address, function(){
+				getFourSquareData(coords, query);
+			});
+		}
+
+	}
 }
 
 // load Google map
@@ -35,19 +82,6 @@ function initMap () {
 		zoom: 13
 	});
 	getFourSquareData(coords, query);
-
-	document.getElementById('search-neighborhood').addEventListener('click', function() {
-		var address = document.getElementById('search-neighborhood-text').value;
-		
-		if (address === '') {
-			window.alert('You must enter an area or an address.');
-		} else {
-			// send address to geocode function to convert to lat lng
-			geocodeAddress(address, function(){
-				getFourSquareData(coords, query);
-			});
-		}
-	});
 }
 
 
@@ -87,34 +121,38 @@ function getFourSquareData(coords, query) {
 	removeAllMarkers();
 	$.getJSON(base_url + '?ll=' + coords.lat + ',' + coords.lng + 
 		'&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=' + version + 
-		'&query=' + query, {}, function(result) {
-			for (var i = 0; i < result.response.venues.length; i++) {
-				latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
-				result.response.venues[i].location.lng);
-				coffeePlace = {
-					name: result.response.venues[i].name,
-					phone: result.response.venues[i].contact.formattedPhone,
-					displayUrl: result.response.venues[i].url,
-					htmlUrl: '<a href="' + result.response.venues[i].url + '">' + result.response.venues[i].url + '</a>',
-					address: [result.response.venues[i].location.formattedAddress[0],
-					result.response.venues[i].location.formattedAddress[1],
-					result.response.venues[i].location.formattedAddress[2]],
-					latlng: latlng,
-					marker: new setMarker(latlng)
-				};
-				coffeePlace.marker = addBounce(coffeePlace);
-				createInfoWindow(coffeePlace);
-				foursquareData.push(coffeePlace);
-			}
-			// check if this is the first session
-			if (sessionStarted === true) {
-				ViewModel.selectedSpots(foursquareData);
-				sessionStarted = false;
-			} else {
-				findDistance();
-			}
+		'&query=' + query, {})
+		.done(function(result) {
+				for (var i = 0; i < result.response.venues.length; i++) {
+					latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
+					result.response.venues[i].location.lng);
+					coffeePlace = {
+						name: result.response.venues[i].name,
+						phone: result.response.venues[i].contact.formattedPhone,
+						displayUrl: result.response.venues[i].url,
+						htmlUrl: '<a href="' + result.response.venues[i].url + '">' + result.response.venues[i].url + '</a>',
+						address: [result.response.venues[i].location.formattedAddress[0],
+						result.response.venues[i].location.formattedAddress[1],
+						result.response.venues[i].location.formattedAddress[2]],
+						latlng: latlng,
+						marker: new setMarker(latlng)
+					};
+					coffeePlace.marker = addBounce(coffeePlace);
+					createInfoWindow(coffeePlace);
+					foursquareData.push(coffeePlace);
+				}
+				// check if this is the first session
+				if (sessionStarted === true) {
+					viewModel.selectedSpots(foursquareData);
+					sessionStarted = false;
+				} else {
+					findDistance();
+				}
 
-	});
+		})
+		.fail(function(result) {
+			window.alert('Could not find a coffee shop in your area. Please try again.');
+		});
 }
 
 // apply filter on fourquare data pull
@@ -122,8 +160,9 @@ function getFourSquareData(coords, query) {
 function findDistance() {
 	var distanceMatrixService = new google.maps.DistanceMatrixService();
 	var origin = [new google.maps.LatLng(parseFloat(coords.lat), parseFloat(coords.lng))];
-	var mode = document.getElementById('mode').value;
-	var maxDuration = document.getElementById('max-duration').value;	
+	var mode = viewModel.selectedMode().actualValue;
+	var maxDuration = viewModel.selectedTime().actualValue;
+	
 	// create a temporary store for foursquareData
 	var filteredList = foursquareData;
 	removeAllMarkers();
@@ -148,7 +187,7 @@ function findDistance() {
 					foursquareData.push(listItem);
 
 					// Update view model
-					ViewModel.selectedSpots(foursquareData);
+					viewModel.selectedSpots(foursquareData);
 				} 
 			}
 			if (filteredList.length === 0) {
@@ -212,8 +251,14 @@ function createInfoWindow (placeInfo) {
 	});
 }
 
-// creating knockout viewmodel
-var ViewModel = new viewModel();
+// on error loading the Google API
+
+function googleAPIError() {
+	window.alert('There was an error loading the Google Maps API.  Please reload the page and try again.');	
+}
+
+// creating knockout viewModel
+var viewModel = new ViewModel();
 
 // apply bindings
-ko.applyBindings(ViewModel);
+ko.applyBindings(viewModel);
