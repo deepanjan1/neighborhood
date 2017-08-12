@@ -18,14 +18,14 @@ var coords = {
 // constructor for travel mode object
 var mode = function (text, value) {
 	this.displayText = text;
-	this.actualValue = value
-}
+	this.actualValue = value;
+};
 
 // constructor for time object
 var time = function (text, value) {
 	this.displayText = text;
-	this.actualValue = value
-}
+	this.actualValue = value;
+};
 
 // view model
 function ViewModel() {
@@ -72,7 +72,7 @@ function ViewModel() {
 			});
 		}
 
-	}
+	};
 }
 
 // load Google map
