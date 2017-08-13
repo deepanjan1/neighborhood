@@ -126,11 +126,12 @@ function getFourSquareData(coords, query) {
 				for (var i = 0; i < result.response.venues.length; i++) {
 					latlng = new google.maps.LatLng(result.response.venues[i].location.lat, 
 					result.response.venues[i].location.lng);
+					var htmlUrl = result.response.venues[i].url ?  result.response.venues[i].url : "website not available";
 					coffeePlace = {
 						name: result.response.venues[i].name,
 						phone: result.response.venues[i].contact.formattedPhone,
 						displayUrl: result.response.venues[i].url,
-						htmlUrl: '<a href="' + result.response.venues[i].url + '">' + result.response.venues[i].url + '</a>',
+						htmlUrl: '<a href="' + htmlUrl + '">' + htmlUrl + '</a>',
 						address: [result.response.venues[i].location.formattedAddress[0],
 						result.response.venues[i].location.formattedAddress[1],
 						result.response.venues[i].location.formattedAddress[2]],

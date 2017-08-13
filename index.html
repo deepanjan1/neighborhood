@@ -34,21 +34,17 @@
 				<div class="row">
 					<hr class="bold-rule col-12">	
 				</div>
-				<ul class="search-results" data-bind="foreach: selectedSpots">
-						<div class="row">
-							<div class="col-12">
-								<li id="button-click"><span data-bind="text: name, click: $parent.showInfo"> </span></li>
-								<ul>
-									<li><span data-bind="text: address"></span></li>
-									<li><span data-bind="text: phone"></span></li>
-									<li><span data-bind="html: htmlUrl"></span></li>
-								</ul>
-							</div>
-						</div>
-						<div class="row">
-							<hr class="col-12">	
-						</div>
-				</ul>
+				<div class="row">
+					<ul class="search-results" data-bind="foreach: selectedSpots">
+						<li id="button-click"><span data-bind="text: name, click: $parent.showInfo"> </span></li>
+						<ul>
+							<li><span data-bind="text: address"></span></li>
+							<li><span data-bind="text: phone"></span></li>
+							<li><span data-bind="html: htmlUrl"></span></li>
+						</ul>
+						<hr class="col-12">	
+					</ul>
+				</div>
 			</div>
 			<div class="col-sm-8 col-md-8 border" id="map"></div>
 		</div>
@@ -59,7 +55,7 @@
 	<script async defer onerror="googleAPIError()" 
         src="https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing,places&key=AIzaSyCHBVQfAQVs1lWPrgQ5p9hI1bRGxsQShcI&v=3&callback=initMap">
     </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-
+    <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+	<script src="https://npmcdn.com/bootstrap@4.0.0-alpha.5/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
